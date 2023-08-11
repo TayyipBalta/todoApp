@@ -3,11 +3,30 @@ const todoInput = document.querySelector('.new-todo');
 const todoList = document.querySelector('.todo-list');
 const toggleAlls = document.querySelector('#toggleAll');
 
+const counti = document.querySelector('#item-count');
+
+let count = 0;
+
+let data = [];
+loadData();
 function saveData() {
   localStorage.setItem("data", todoList.innerHTML);
 }
 
+function itemCount(){
+    if(todoList.innerHTML === ""){
+        
+        counti.innerText = ("⭕");
+    }
+
+    else if(count > 0 & todoList.innerHTML !== ""){
+
+        counti.innerText = count;
+    }
+}
+
 function addTodo(event) {
+    count++;
     event.preventDefault();
 
     if (todoInput.value === '') {
@@ -24,10 +43,8 @@ function addTodo(event) {
         <input class="edit" value="${todoInput.value}">
     </li>`;
 
-
     saveData();
     todoInput.value = '';
-
     bindClicks();
 }
 
@@ -43,6 +60,7 @@ for (const filter of document.querySelectorAll('.filters input')) {
 
 function markTodo() {
     this.parentElement.parentElement.classList.toggle('completed');
+    saveData();
 }
 
 function removeTodo() {
@@ -72,6 +90,7 @@ function editTodo(e) {
         }
         this.previousElementSibling.querySelector('label').innerText = this.value;
         this.parentElement.classList.remove('editing');
+        saveData();
     }
 }
 
@@ -99,9 +118,11 @@ function delegateDblClick(e) {
 
     if(targetEl.classList.contains('dodoLabel')) {
         showTodoEdit2(targetEl);
+        saveData();
     }
     if(targetEl.parentElement.classList.contains('editing')){
         this.classList.remove();
+        saveData();
     }
 }
 
@@ -109,11 +130,16 @@ function delegateDblClick(e) {
 function bindClicks() {
     for (const btn of document.querySelectorAll('.destroy')) {
         btn.addEventListener('click', removeTodo);
+        
+        saveData();
     }
 
     for (const btn of document.querySelectorAll('.toggle')) {
         btn.addEventListener('click', markTodo);
+        saveData();
     }
+
+    itemCount();
 
     //document.querySelectorAll('.view').forEach(x => x.addEventListener('dblclick', showTodoEdit));
 
@@ -127,13 +153,15 @@ let toggleAllsChoice = () => {
 
         if(complateAll.parentElement.classList.contains('completed')){
             complateAll.parentElement.classList.remove('completed');
+            saveData();
         }
         else{
             complateAll.parentElement.classList.add('completed');
+            saveData();
         }
     }
 }
-saveData();
+
 function loadData() {
     todoList.innerHTML = localStorage.getItem("data");
    }
