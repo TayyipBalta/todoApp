@@ -15,18 +15,17 @@ function saveData() {
 
 function itemCount(){
     if(todoList.innerHTML === ""){
-        
-        counti.innerText = ("⭕");
+    
+        return;
     }
 
-    else if(count > 0 & todoList.innerHTML !== ""){
+    else if(todoList.innerHTML !== ""){
 
         counti.innerText = count;
     }
 }
 
 function addTodo(event) {
-    count++;
     event.preventDefault();
 
     if (todoInput.value === '') {
@@ -42,6 +41,7 @@ function addTodo(event) {
         </div>
         <input class="edit" value="${todoInput.value}">
     </li>`;
+    count++;
 
     saveData();
     todoInput.value = '';
@@ -59,12 +59,23 @@ for (const filter of document.querySelectorAll('.filters input')) {
 }
 
 function markTodo() {
-    this.parentElement.parentElement.classList.toggle('completed');
-    saveData();
+    if(this.parentElement.parentElement.classList.toggle('completed')){
+        count--;
+        itemCount();
+        saveData();
+    }
+    else if(this.parentElement.parentElement.classList.toggle(!'completed')){
+
+        count++;
+        itemCount();
+        saveData();
+    }
 }
 
 function removeTodo() {
     this.parentElement.parentElement.remove();
+    count--;
+    itemCount();
     saveData();
 }
 
@@ -130,12 +141,15 @@ function delegateDblClick(e) {
 function bindClicks() {
     for (const btn of document.querySelectorAll('.destroy')) {
         btn.addEventListener('click', removeTodo);
-        
+
+        count--;
+        itemCount();
         saveData();
     }
 
     for (const btn of document.querySelectorAll('.toggle')) {
         btn.addEventListener('click', markTodo);
+        count++;
         saveData();
     }
 
